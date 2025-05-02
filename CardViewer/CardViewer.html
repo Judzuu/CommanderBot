@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scryfall Card Viewer</title>
+  <link rel="icon" type="image/x-icon" href="commanderbotlogo.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+      background: #f5f5f5;
+    }
+    #card {
+      margin-top: 20px;
+    }
+    img {
+      max-width: 300px;
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+  <center>
+  <h1>Scryfall Card Finder</h1>
+
+  <input type="text" id="cardName" placeholder="Enter card name..."/>
+  <button onclick="searchCard()">Search</button>
+
+  <div id="card"></div>
+
+  <script>
+    function searchCard() {
+      const name = document.getElementById('cardName').value.trim();
+      const cardDiv = document.getElementById('card');
+
+      if (!name) {
+        cardDiv.innerHTML = "<p>Please enter a card name.</p>";
+        return;
+      }
+
+      fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(name)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.image_uris) {
+            cardDiv.innerHTML = `
+              <h2>${data.name}</h2>
+              <img src="${data.image_uris.normal}" alt="${data.name}" />
+            `;
+          } else {
+            cardDiv.innerHTML = "<p>Card found, but no image available.</p>";
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          cardDiv.innerHTML = "<p>Card not found. Please try another name.</p>";
+        });
+    }
+  </script>
+  </center>
+</body>
+</html>
