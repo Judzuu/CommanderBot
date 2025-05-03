@@ -301,7 +301,7 @@
           item.onclick = () => {
             input.value = name;
             list.innerHTML = '';
-            fetchVersions(name, dropdownId);
+            setTimeout(() => fetchVersions(name, dropdownId), 50); // slight buffer
           };
           list.appendChild(item);
         });
