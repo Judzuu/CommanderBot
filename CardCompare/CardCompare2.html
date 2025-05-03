@@ -209,7 +209,7 @@
       trade[side].forEach((entry, index) => {
         const { card, foil } = entry;
         const price = foil ? card.prices.usd_foil : card.prices.usd;
-        const displayPrice = price || "0.00";
+        const displayPrice = "" + price + " USD" || "0.00 USD";
         total += parseFloat(displayPrice) || 0;
 
         const li = document.createElement('li');
