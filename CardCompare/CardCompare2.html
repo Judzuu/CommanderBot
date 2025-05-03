@@ -159,8 +159,6 @@
   <div class="error" id="error-message"></div>
 
   <script>
-    const USD_TO_CAD = 1.35;
-
     const trade = {
       A: [],
       B: []
@@ -211,19 +209,8 @@
       trade[side].forEach((entry, index) => {
         const { card, foil } = entry;
         const price = foil ? card.prices.usd_foil : card.prices.usd;
-        const value = parseFloat(price) || 0;
         const displayPrice = price || "0.00";
         total += parseFloat(displayPrice) || 0;
-
-        const addBtn = document.getElementById(`add${side}`);
-        if (value === 0 || isNaN(value)) {
-            addBtn.disabled = true;
-            addBtn.title = "This card has no price data.";
-        } else {
-            addBtn.disabled = false;
-            addBtn.title = "";
-        }
-
 
         const li = document.createElement('li');
         li.innerHTML = `
