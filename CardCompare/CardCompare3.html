@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Magic Card Comparison</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      text-align: center;
+    }
+    .input-group {
+      margin: 20px 0;
+    }
+    input, select, button {
+      padding: 8px;
+      margin: 5px;
+      width: 250px;
+      max-width: 90%;
+    }
+    button {
+      cursor: pointer;
+    }
+    .card-container {
+      display: flex;
+      justify-content: center;
+      gap: 40px;
+      margin-top: 20px;
+      flex-wrap: wrap;
+    }
+    .card {
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      padding: 20px;
+      width: 300px;
+      box-shadow: 2px 2px 10px #aaa;
+    }
+    .card img {
+      width: 100%;
+      border-radius: 8px;
+    }
+    .price {
+      font-weight: bold;
+      margin-top: 10px;
+    }
+    .error {
+      color: red;
+      margin-top: 10px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Magic Card Price Comparison</h1>
+
+  <div class="input-group">
+    <h3>Card 1</h3>
+    <input type="text" id="card1-name" placeholder="Search card name">
+    <select id="card1-version">
+      <option value="">Select a version...</option>
+    </select>
+  </div>
+
+  <div class="input-group">
+    <h3>Card 2</h3>
+    <input type="text" id="card2-name" placeholder="Search card name">
+    <select id="card2-version">
+      <option value="">Select a version...</option>
+    </select>
+  </div>
+
+  <button id="compare-button">Compare</button>
+
+  <div id="error-message" class="error"></div>
+  <div id="card-comparison" class="card-container"></div>
+
+  <script>
+    async function fetchVersions(cardName, dropdown) {
+      dropdown.innerHTML = '<option value="">Loading versions...</option>';
+      try {
+        const searchRes = await fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`);
+        if (!searchRes.ok) throw new Error("Card not found.");
+        const cardData = await searchRes.json();
+
+        const versionsRes = await fetch(cardData.prints_search_uri);
+        const versions = await versionsRes.json();
+
+        dropdown.innerHTML = '<option value="">Select a version...</option>';
+        versions.data.forEach(card => {
+          const label = `${card.set_name} (${card.collector_number})${card.foil ? ' [Foil]' : ''}`;
+          const option = document.createElement('option');
+          option.value = card.id;
+          option.textContent = label;
+          dropdown.appendChild(option);
+        });
+      } catch (err) {
+        dropdown.innerHTML = `<option value="">Error loading versions</option>`;
+      }
+    }
+
+    async function fetchCardById(cardId) {
+      const res = await fetch(`https://api.scryfall.com/cards/${cardId}`);
+      if (!res.ok) throw new Error("Failed to load card.");
+      return await res.json();
+    }
+
+    function displayCard(card) {
+      const div = document.createElement('div');
+      div.className = 'card';
+      div.innerHTML = `
+        <a href="${card.scryfall_uri}" target="_blank"><h2>${card.name}</h2></a>
+        <img src="${card.image_uris?.normal || ''}" alt="${card.name}">
+        <div class="price">Normal: $${card.prices.usd || 'N/A'}</div>
+        <div class="price">Foil: $${card.prices.usd_foil || 'N/A'}</div>
+        <div><small>Set: ${card.set_name} (${card.collector_number})</small></div>
+      `;
+      return div;
+    }
+
+    // Event listeners for search input
+    document.getElementById('card1-name').addEventListener('change', () => {
+      const name = document.getElementById('card1-name').value.trim();
+      if (name) fetchVersions(name, document.getElementById('card1-version'));
+    });
+
+    document.getElementById('card2-name').addEventListener('change', () => {
+      const name = document.getElementById('card2-name').value.trim();
+      if (name) fetchVersions(name, document.getElementById('card2-version'));
+    });
+
+    // Compare button handler
+    document.getElementById('compare-button').addEventListener('click', async () => {
+      const card1Id = document.getElementById('card1-version').value;
+      const card2Id = document.getElementById('card2-version').value;
+      const errorMsg = document.getElementById('error-message');
+      const container = document.getElementById('card-comparison');
+      errorMsg.textContent = '';
+      container.innerHTML = '';
+
+      if (!card1Id || !card2Id) {
+        errorMsg.textContent = 'Please select a version for both cards.';
+        return;
+      }
+
+      try {
+        const [card1, card2] = await Promise.all([
+          fetchCardById(card1Id),
+          fetchCardById(card2Id)
+        ]);
+        container.appendChild(displayCard(card1));
+        container.appendChild(displayCard(card2));
+      } catch (err) {
+        errorMsg.textContent = 'Error loading card data.';
+      }
+    });
+  </script>
+</body>
+</html>
