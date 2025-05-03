@@ -166,7 +166,7 @@
       const dropdown = document.getElementById(dropdownId);
       dropdown.innerHTML = '<option>Loading...</option>';
       try {
-        const search = await fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`);
+        const search = await fetch(`https://api.scryfall.com/cards/named?exact=${encodeURIComponent(cardName)}`);
         const card = await search.json();
         const res = await fetch(card.prints_search_uri);
         const data = await res.json();
