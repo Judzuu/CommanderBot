@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>MTG Trade Comparison</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+    h1, h2 {
+      text-align: center;
+    }
+    .trade-sides {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+    .side {
+      flex: 1;
+      min-width: 300px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 2px 2px 10px #ddd;
+    }
+    .input-group {
+      margin-bottom: 10px;
+    }
+    input, select, button {
+      width: 100%;
+      margin-top: 5px;
+      padding: 8px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      margin-bottom: 10px;
+      background: #f7f7f7;
+      padding: 8px;
+      border-radius: 6px;
+    }
+    .card-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .total {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    .error {
+      color: red;
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <h1>MTG Trade Comparison</h1>
+
+  <div class="trade-sides">
+    <!-- Side A -->
+    <div class="side">
+      <h2>Trader A</h2>
+      <div class="input-group">
+        <input type="text" id="cardA-name" placeholder="Search card name">
+        <select id="cardA-version">
+          <option value="">Select version...</option>
+        </select>
+        <button onclick="addCardToTrade('A')">Add to Trade</button>
+      </div>
+      <ul id="listA"></ul>
+      <div class="total">Total: $<span id="totalA">0.00</span></div>
+    </div>
+
+    <!-- Side B -->
+    <div class="side">
+      <h2>Trader B</h2>
+      <div class="input-group">
+        <input type="text" id="cardB-name" placeholder="Search card name">
+        <select id="cardB-version">
+          <option value="">Select version...</option>
+        </select>
+        <button onclick="addCardToTrade('B')">Add to Trade</button>
+      </div>
+      <ul id="listB"></ul>
+      <div class="total">Total: $<span id="totalB">0.00</span></div>
+    </div>
+  </div>
+
+  <div class="error" id="error-message"></div>
+
+  <script>
+    const trade = {
+      A: [],
+      B: []
+    };
+
+    async function fetchVersions(cardName, dropdownId) {
+      const dropdown = document.getElementById(dropdownId);
+      dropdown.innerHTML = '<option>Loading...</option>';
+      try {
+        const search = await fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`);
+        const card = await search.json();
+        const res = await fetch(card.prints_search_uri);
+        const data = await res.json();
+
+        dropdown.innerHTML = '<option value="">Select version...</option>';
+        data.data.forEach(print => {
+          const label = `${print.set_name} (#${print.collector_number})${print.foil ? ' [Foil]' : ''}`;
+          const option = document.createElement('option');
+          option.value = print.id;
+          option.textContent = label;
+          dropdown.appendChild(option);
+        });
+      } catch {
+        dropdown.innerHTML = '<option value="">Error loading versions</option>';
+      }
+    }
+
+    async function fetchCardById(cardId) {
+      const res = await fetch(`https://api.scryfall.com/cards/${cardId}`);
+      return await res.json();
+    }
+
+    function renderList(side) {
+      const listEl = document.getElementById(`list${side}`);
+      const totalEl = document.getElementById(`total${side}`);
+      listEl.innerHTML = '';
+      let total = 0;
+
+      trade[side].forEach((card, index) => {
+        const li = document.createElement('li');
+        const price = card.prices.usd_foil || card.prices.usd || "0.00";
+        total += parseFloat(price) || 0;
+        li.innerHTML = `
+          <div class="card-info">
+            <span>${card.name} (${card.set_name}) ${card.prices.usd_foil ? '[Foil]' : ''} - $${price}</span>
+            <button onclick="removeCard('${side}', ${index})">Remove</button>
+          </div>
+        `;
+        listEl.appendChild(li);
+      });
+
+      totalEl.textContent = total.toFixed(2);
+    }
+
+    function removeCard(side, index) {
+      trade[side].splice(index, 1);
+      renderList(side);
+    }
+
+    async function addCardToTrade(side) {
+      const versionId = document.getElementById(`card${side}-version`).value;
+      const errorMsg = document.getElementById('error-message');
+      errorMsg.textContent = '';
+
+      if (!versionId) {
+        errorMsg.textContent = 'Please select a version.';
+        return;
+      }
+
+      try {
+        const card = await fetchCardById(versionId);
+        trade[side].push(card);
+        renderList(side);
+      } catch {
+        errorMsg.textContent = 'Failed to add card.';
+      }
+    }
+
+    document.getElementById('cardA-name').addEventListener('change', () => {
+      fetchVersions(document.getElementById('cardA-name').value.trim(), 'cardA-version');
+    });
+
+    document.getElementById('cardB-name').addEventListener('change', () => {
+      fetchVersions(document.getElementById('cardB-name').value.trim(), 'cardB-version');
+    });
+  </script>
+</body>
+</html>
