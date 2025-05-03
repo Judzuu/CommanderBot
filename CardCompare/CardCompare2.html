@@ -22,7 +22,7 @@
     }
     .side {
       flex: 1;
-      min-width: 280px;
+      min-width: 250px;
       border: 1px solid #ccc;
       padding: 15px;
       border-radius: 10px;
@@ -302,7 +302,7 @@
           item.onclick = () => {
             input.value = name;
             list.innerHTML = '';
-            fetchVersions(name, dropdownId);
+            setTimeout(() => fetchVersions(name, dropdownId), 50); // slight buffer
           };
           list.appendChild(item);
         });
