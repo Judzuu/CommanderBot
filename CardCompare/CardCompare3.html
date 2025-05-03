@@ -86,7 +86,7 @@
 
         dropdown.innerHTML = '<option value="">Select a version...</option>';
         versions.data.forEach(card => {
-          const label = `${card.set_name} (${card.collector_number})${card.foil ? ' [Foil]' : ''}`;
+          const label = `${card.set_name} (${card.collector_number})${card.foil ? '' : ''}`;
           const option = document.createElement('option');
           option.value = card.id;
           option.textContent = label;
