@@ -35,7 +35,7 @@
       margin-bottom: 10px;
     }
     input[type="text"], select, button {
-      width: 98%;
+      width: 95%;
       padding: 6px;
       font-size: 14px;
     }
@@ -133,7 +133,7 @@
         <button onclick="addCardToTrade('A')">Add to Trade</button>
       </div>
       <ul id="listA"></ul>
-      <div class="total">Total: $<span id="totalA">0.00</span></div>
+      <div class="total">Total: $<span id="totalA">0.00 USD</span></div>
     </div>
 
     <!-- Trader B -->
@@ -152,7 +152,7 @@
         <button onclick="addCardToTrade('B')">Add to Trade</button>
       </div>
       <ul id="listB"></ul>
-      <div class="total">Total: $<span id="totalB">0.00</span></div>
+      <div class="total">Total: $<span id="totalB">0.00 USD</span></div>
     </div>
   </div>
 
@@ -209,7 +209,7 @@
       trade[side].forEach((entry, index) => {
         const { card, foil } = entry;
         const price = foil ? card.prices.usd_foil : card.prices.usd;
-        const displayPrice = "" + price + " USD" || "0.00 USD";
+        const displayPrice = price || "0.00";
         total += parseFloat(displayPrice) || 0;
 
         const li = document.createElement('li');
