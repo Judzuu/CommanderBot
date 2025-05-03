@@ -1,42 +1,74 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <title>MTG Card Trade Evaluator</title>
+  <meta charset="UTF-8">
+  <title>MTG Trade Balance</title>
+  <link rel="icon" type="image/x-icon" href="commanderbotlogo.png">
   <style>
     body {
-      font-family: sans-serif;
-      padding: 1rem;
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
     }
-    .container {
+    h1, h2 {
+      text-align: center;
+    }
+    .trade-sides {
       display: flex;
-      gap: 2rem;
+      justify-content: space-between;
+      gap: 40px;
+      flex-wrap: wrap;
     }
-    .trader {
+    .side {
+      flex: 1;
+      min-width: 300px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 2px 2px 10px #ddd;
+    }
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+    input[type="text"], select, button {
+      width: 100%;
+      padding: 6px;
+      font-size: 14px;
+    }
+    .switch-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .switch-group label {
+      font-size: 14px;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    li {
+      background: #f7f7f7;
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 6px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+    .card-info {
       flex: 1;
     }
-    .autocomplete-results {
-      position: relative;
+    .card-info span {
+      display: block;
+      font-size: 14px;
     }
-    .autocomplete-list {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      z-index: 10;
-      background: white;
-      border: 1px solid #ccc;
-      max-height: 150px;
-      overflow-y: auto;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
-    }
-    .autocomplete-list div {
-      padding: 6px 10px;
-      cursor: pointer;
-    }
-    .autocomplete-list div:hover {
-      background: #f0f0f0;
+    .card-info small {
+      color: gray;
     }
     .card-img {
       width: 100px;
@@ -44,188 +76,244 @@
       border-radius: 6px;
       box-shadow: 0 0 4px rgba(0,0,0,0.2);
     }
-    .unbalanced {
+    .total {
+      margin-top: 15px;
+      font-weight: bold;
+    }
+    .error {
       color: red;
+      text-align: center;
+    }
+    .unbalanced {
+        color: red;
+    }
+    .autocomplete-results {
+        position: relative;
+    }
+    .autocomplete-list {
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        z-index: 10;
+        background: white;
+        border: 1px solid #ccc;
+        max-height: 150px;
+        overflow-y: auto;
+        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .autocomplete-list div {
+        padding: 6px 10px;
+        cursor: pointer;
+    }
+    .autocomplete-list div:hover {
+        background: #f0f0f0;
     }
   </style>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3031340425628894"
+  crossorigin="anonymous"></script>
 </head>
 <body>
-  <h1>Magic: The Gathering Trade Evaluator</h1>
-  <div class="container">
-    <div class="trader">
+  <h1>MTG Trade Balance Powered By Scryfall</h1>
+
+  <div class="trade-sides">
+    <!-- Trader A -->
+    <div class="side">
       <h2>Trader A</h2>
-      <div class="autocomplete-results">
-        <input type="text" id="cardA-name" placeholder="Search card name" autocomplete="off">
-        <div id="autocompleteA" class="autocomplete-list"></div>
+      <div class="input-group">
+        <div class="autocomplete-results">
+            <input type="text" id="cardA-name" placeholder="Search card name" autocomplete="off">
+            <div id="autocompleteA" class="autocomplete-list"></div>
+          </div>          
+        <select id="cardA-version"><option value="">Select version...</option></select>
+        <div class="switch-group">
+          <input type="checkbox" id="foilA">
+          <label for="foilA">Foil</label>
+        </div>
+        <button onclick="addCardToTrade('A')">Add to Trade</button>
       </div>
-      <select id="cardA-version"></select>
-      <label><input type="checkbox" id="foilA"> Foil</label>
-      <button id="addA" disabled>Add to Trade</button>
-      <table id="listA"></table>
-      <p>Total: <span id="totalA">0.00</span></p>
+      <ul id="listA"></ul>
+      <div class="total">Total: $<span id="totalA">0.00</span></div>
     </div>
-    <div class="trader">
+
+    <!-- Trader B -->
+    <div class="side">
       <h2>Trader B</h2>
-      <div class="autocomplete-results">
-        <input type="text" id="cardB-name" placeholder="Search card name" autocomplete="off">
-        <div id="autocompleteB" class="autocomplete-list"></div>
+      <div class="input-group">
+        <div class="autocomplete-results">
+            <input type="text" id="cardB-name" placeholder="Search card name" autocomplete="off">
+            <div id="autocompleteB" class="autocomplete-list"></div>
+          </div>          
+        <select id="cardB-version"><option value="">Select version...</option></select>
+        <div class="switch-group">
+          <input type="checkbox" id="foilB">
+          <label for="foilB">Foil</label>
+        </div>
+        <button onclick="addCardToTrade('B')">Add to Trade</button>
       </div>
-      <select id="cardB-version"></select>
-      <label><input type="checkbox" id="foilB"> Foil</label>
-      <button id="addB" disabled>Add to Trade</button>
-      <table id="listB"></table>
-      <p>Total: <span id="totalB">0.00</span></p>
+      <ul id="listB"></ul>
+      <div class="total">Total: $<span id="totalB">0.00</span></div>
     </div>
   </div>
 
-  <script>
-    const USD_TO_CAD = 1.35;
-    const trade = { A: [], B: [], totalA: 0, totalB: 0 };
+  <div class="error" id="error-message"></div>
 
+  <script>
+    const trade = {
+      A: [],
+      B: []
+    };
+
+    async function fetchVersions(cardName, dropdownId) {
+  const dropdown = document.getElementById(dropdownId);
+  dropdown.innerHTML = '<option>Loading...</option>';
+
+  try {
+    const res = await fetch(`https://api.scryfall.com/cards/named?exact=${encodeURIComponent(cardName)}`);
+    const card = await res.json();
+
+    if (!card || card.object !== "card" || !card.prints_search_uri) {
+      throw new Error("Invalid card response");
+    }
+
+    const printsRes = await fetch(card.prints_search_uri);
+    const data = await printsRes.json();
+
+    dropdown.innerHTML = '<option value="">Select version...</option>';
+
+    data.data.forEach(print => {
+      const label = `${print.set_name} (#${print.collector_number})${print.foil ? '' : ''}`;
+      const option = document.createElement('option');
+      option.value = print.id;
+      option.textContent = label;
+      dropdown.appendChild(option);
+    });
+  } catch (err) {
+    console.error("Error fetching versions:", err);
+    dropdown.innerHTML = '<option value="">Error loading versions</option>';
+  }
+}
+
+    async function fetchCardById(cardId) {
+      const res = await fetch(`https://api.scryfall.com/cards/${cardId}`);
+      return await res.json();
+    }
+
+    function renderList(side) {
+      const listEl = document.getElementById(`list${side}`);
+      const totalEl = document.getElementById(`total${side}`);
+      listEl.innerHTML = '';
+      let total = 0;
+
+      trade[side].forEach((entry, index) => {
+        const { card, foil } = entry;
+        const price = foil ? card.prices.usd_foil : card.prices.usd;
+        const displayPrice = price || "0.00";
+        total += parseFloat(displayPrice) || 0;
+
+        const li = document.createElement('li');
+        li.innerHTML = `
+          <img class="card-img" src="${card.image_uris?.small || ''}" alt="${card.name}">
+          <div class="card-info">
+            <span>${card.name} ${foil ? '[Foil]' : ''}</span>
+            <small>${card.set_name} (#${card.collector_number})</small>
+            <span>$${displayPrice}</span>
+          </div>
+          <button onclick="removeCard('${side}', ${index})">Remove</button>
+        `;
+        listEl.appendChild(li);
+      });
+
+      totalEl.textContent = total.toFixed(2);
+
+      // Update trade total for comparison
+    trade[`total${side}`] = total;
+
+    // Check balance when both sides have cards
+    const otherSide = side === 'A' ? 'B' : 'A';
+    const totalA = trade.totalA || 0;
+    const totalB = trade.totalB || 0;
+
+    document.getElementById('totalA').classList.remove('unbalanced');
+    document.getElementById('totalB').classList.remove('unbalanced');
+
+    if (trade.A.length > 0 && trade.B.length > 0) {
+    const diff = Math.abs(totalA - totalB);
+    if (diff > 5) {
+        if (totalA > totalB) {
+        document.getElementById('totalB').classList.add('unbalanced');
+        } else {
+        document.getElementById('totalA').classList.add('unbalanced');
+        }
+    }
+    }
+    }
+
+    function removeCard(side, index) {
+      trade[side].splice(index, 1);
+      renderList(side);
+    }
+
+    async function addCardToTrade(side) {
+      const versionId = document.getElementById(`card${side}-version`).value;
+      const isFoil = document.getElementById(`foil${side}`).checked;
+      const errorMsg = document.getElementById('error-message');
+      errorMsg.textContent = '';
+
+      if (!versionId) {
+        errorMsg.textContent = 'Please select a version.';
+        return;
+      }
+
+      try {
+        const card = await fetchCardById(versionId);
+        trade[side].push({ card, foil: isFoil });
+        renderList(side);
+      } catch {
+        errorMsg.textContent = 'Failed to add card.';
+      }
+    }
+
+    // Event listeners for auto-fetching versions
+    document.getElementById('cardA-name').addEventListener('change', () => {
+      fetchVersions(document.getElementById('cardA-name').value.trim(), 'cardA-version');
+    });
+    document.getElementById('cardB-name').addEventListener('change', () => {
+      fetchVersions(document.getElementById('cardB-name').value.trim(), 'cardB-version');
+    });
+  </script>
+  <script>
     function setupAutocomplete(inputId, listId, dropdownId) {
       const input = document.getElementById(inputId);
       const list = document.getElementById(listId);
-
+  
       input.addEventListener('input', async () => {
         const query = input.value.trim();
         if (!query) return list.innerHTML = '';
-
+  
         const res = await fetch(`https://api.scryfall.com/cards/autocomplete?q=${encodeURIComponent(query)}`);
         const data = await res.json();
         list.innerHTML = '';
-
+  
         data.data.slice(0, 10).forEach(name => {
           const item = document.createElement('div');
           item.textContent = name;
           item.onclick = () => {
             input.value = name;
             list.innerHTML = '';
-            setTimeout(() => fetchVersions(name, dropdownId), 50);
+            fetchVersions(name, dropdownId);
           };
           list.appendChild(item);
         });
       });
-
+  
+      // Close list on blur
       input.addEventListener('blur', () => setTimeout(() => list.innerHTML = '', 200));
     }
-
+  
     setupAutocomplete('cardA-name', 'autocompleteA', 'cardA-version');
     setupAutocomplete('cardB-name', 'autocompleteB', 'cardB-version');
-
-    async function fetchVersions(cardName, dropdownId) {
-      const dropdown = document.getElementById(dropdownId);
-      dropdown.innerHTML = '<option>Loading...</option>';
-      const side = dropdownId.includes('A') ? 'A' : 'B';
-      const addBtn = document.getElementById(`add${side}`);
-
-      try {
-        const res = await fetch(`https://api.scryfall.com/cards/named?exact=${encodeURIComponent(cardName)}`);
-        const card = await res.json();
-        if (!card || card.object !== 'card' || !card.prints_search_uri) throw new Error('Invalid card');
-
-        const printsRes = await fetch(card.prints_search_uri);
-        const data = await printsRes.json();
-
-        dropdown.innerHTML = '<option value="">Select version...</option>';
-        data.data.forEach(print => {
-          const label = `${print.set_name} (#${print.collector_number})${print.foil ? ' [Foil]' : ''}`;
-          const option = document.createElement('option');
-          option.value = print.id;
-          option.textContent = label;
-          dropdown.appendChild(option);
-        });
-        addBtn.disabled = true;
-      } catch (err) {
-        console.error("Error fetching versions:", err);
-        dropdown.innerHTML = '<option>Error loading versions</option>';
-        addBtn.disabled = true;
-      }
-    }
-
-    document.getElementById('cardA-version').addEventListener('change', () => checkVersionPrice('A'));
-    document.getElementById('cardB-version').addEventListener('change', () => checkVersionPrice('B'));
-
-    async function checkVersionPrice(side) {
-      const dropdown = document.getElementById(`card${side}-version`);
-      const foil = document.getElementById(`foil${side}`).checked;
-      const addBtn = document.getElementById(`add${side}`);
-
-      const id = dropdown.value;
-      if (!id) return addBtn.disabled = true;
-
-      const res = await fetch(`https://api.scryfall.com/cards/${id}`);
-      const card = await res.json();
-
-      const price = foil ? card.prices.usd_foil : card.prices.usd;
-      const value = parseFloat(price) || 0;
-
-      if (value === 0 || isNaN(value)) {
-        addBtn.disabled = true;
-        addBtn.title = "This card has no price data.";
-      } else {
-        addBtn.disabled = false;
-        addBtn.title = `Add ${card.name} @ $${value.toFixed(2)} USD / $${(value * USD_TO_CAD).toFixed(2)} CAD to trade`;
-      }
-    }
-
-    document.getElementById('addA').addEventListener('click', () => addToTrade('A'));
-    document.getElementById('addB').addEventListener('click', () => addToTrade('B'));
-
-    async function addToTrade(side) {
-      const dropdown = document.getElementById(`card${side}-version`);
-      const foil = document.getElementById(`foil${side}`).checked;
-      const list = document.getElementById(`list${side}`);
-      const totalEl = document.getElementById(`total${side}`);
-
-      const res = await fetch(`https://api.scryfall.com/cards/${dropdown.value}`);
-      const card = await res.json();
-
-      const price = foil ? card.prices.usd_foil : card.prices.usd;
-      const value = parseFloat(price) || 0;
-      if (value === 0 || isNaN(value)) return;
-
-      trade[side].push({ name: card.name, value });
-
-      const row = document.createElement('tr');
-
-      const imgCell = document.createElement('td');
-      const img = document.createElement('img');
-      img.src = card.image_uris?.small || '';
-      img.alt = card.name;
-      img.className = 'card-img';
-      imgCell.appendChild(img);
-
-      const nameCell = document.createElement('td');
-      nameCell.textContent = card.name;
-
-      const priceCell = document.createElement('td');
-      priceCell.textContent = `$${value.toFixed(2)} USD / $${(value * USD_TO_CAD).toFixed(2)} CAD`;
-
-      row.appendChild(imgCell);
-      row.appendChild(nameCell);
-      row.appendChild(priceCell);
-      list.appendChild(row);
-
-      let total = trade[side].reduce((acc, c) => acc + c.value, 0);
-      totalEl.textContent = total.toFixed(2);
-      trade[`total${side}`] = total;
-
-      const otherSide = side === 'A' ? 'B' : 'A';
-      const totalA = trade.totalA || 0;
-      const totalB = trade.totalB || 0;
-      document.getElementById('totalA').classList.remove('unbalanced');
-      document.getElementById('totalB').classList.remove('unbalanced');
-      if (trade.A.length > 0 && trade.B.length > 0) {
-        const diff = Math.abs(totalA - totalB);
-        if (diff > 5) {
-          if (totalA > totalB) {
-            document.getElementById('totalB').classList.add('unbalanced');
-          } else {
-            document.getElementById('totalA').classList.add('unbalanced');
-          }
-        }
-      }
-    }
   </script>
+  
 </body>
 </html>
