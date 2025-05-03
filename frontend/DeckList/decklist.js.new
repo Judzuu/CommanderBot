@@ -1,0 +1,154 @@
+// Main entry: parse textarea, fetch from Scryfall, render decklist
+window.loadDeck = async function() {
+  console.log("loadDeck called");
+
+  // 1. Read & parse each line into structured cards
+  const deckText = document.getElementById('deckInput').value;
+  const parsedCards = deckText
+    .split('\n')
+    .map(line => {
+      // Quantity (e.g. "3x" or "3")
+      const qtyMatch = line.match(/^\s*(\d+)x?\s+/);
+      const quantity = qtyMatch ? parseInt(qtyMatch[1], 10) : 1;
+
+      // Foil marker (*F*)
+      const foil = /\*F\*/.test(line);
+
+      // Set code in parentheses (e.g. (STA))
+      const setMatch = line.match(/\(([^)]+)\)/);
+      const setCode = setMatch ? setMatch[1].toLowerCase() : null;
+
+      // Collector number immediately after the ") " — digits only
+      const collectorMatch = line.match(/\)\s+(\d+)/);
+      const collectorNumber = collectorMatch ? collectorMatch[1] : null;
+
+      // Clean name: strip qty, "(SET) NNN", and "*F*"
+      const name = line
+        .replace(/^\s*\d+x?\s+/, '')
+        .replace(/\s+\(.*?\)\s+[0-9a-zA-Z]+(\s*\*F\*)?$/, '')
+        .trim();
+
+      return { name, quantity, foil, setCode, collectorNumber };
+    })
+    .filter(c => c.name);
+
+  // 2. Prepare container
+  const deckArea = document.getElementById('deckArea');
+  deckArea.innerHTML = '';
+
+  if (!parsedCards.length) {
+    deckArea.textContent = 'No cards found.';
+    return;
+  }
+
+  // 3. Build unique lookup keys (setCode+collectorNumber or name+set)
+  const lookups = parsedCards.map(c => {
+    let key;
+    if (c.setCode && c.collectorNumber) {
+      key = `${c.setCode}::${c.collectorNumber}`;
+    } else if (c.setCode) {
+      key = `${c.name}::${c.setCode}`;
+    } else {
+      key = c.name;
+    }
+    return { key, ...c };
+  });
+  const unique = Array.from(new Map(lookups.map(l => [l.key, l])).values());
+
+  // 4. Fetch Scryfall data for each unique key
+  const cardData = {};
+  await Promise.all(unique.map(async ({ key, name, setCode, collectorNumber }) => {
+    let url;
+    if (setCode && collectorNumber) {
+      // Exact print endpoint
+      url = `https://api.scryfall.com/cards/${encodeURIComponent(setCode)}/${encodeURIComponent(collectorNumber)}`;
+    } else {
+      // Fallback to named lookup
+      url = `https://api.scryfall.com/cards/named?exact=${encodeURIComponent(name)}`;
+      if (setCode) url += `&set=${encodeURIComponent(setCode)}`;
+    }
+
+    try {
+      const resp = await fetch(url);
+      cardData[key] = resp.ok
+        ? await resp.json()
+        : { error: `Not found: ${name}${collectorNumber ? ` #${collectorNumber}` : ''}` };
+    } catch (err) {
+      console.error(err);
+      cardData[key] = { error: `Fetch error for ${name}` };
+    }
+  }));
+
+  // 5. Render each card in original order
+  parsedCards.forEach(({ name, quantity, foil, setCode, collectorNumber }) => {
+    const key = setCode && collectorNumber
+      ? `${setCode}::${collectorNumber}`
+      : setCode
+        ? `${name}::${setCode}`
+        : name;
+
+    const card = cardData[key];
+    const row = document.createElement('div');
+    row.style.display = 'grid';
+    row.style.gridTemplateColumns = '40px 80px 1fr 100px';
+    row.style.alignItems = 'center';
+    row.style.gap = '1em';
+    row.style.margin = '0.75em auto';
+    row.style.maxWidth = '650px';
+    row.style.background = '#fff';
+    row.style.padding = '0.6em 1em';
+    row.style.borderRadius = '8px';
+    row.style.boxShadow = '0 2px 5px rgba(0,0,0,0.1)';
+
+    if (card.error) {
+      row.textContent = card.error;
+      deckArea.appendChild(row);
+      return;
+    }
+
+    // Quantity
+    const qtyBox = document.createElement('div');
+    qtyBox.style.fontWeight = 'bold';
+    qtyBox.style.fontSize = '1.1em';
+    qtyBox.textContent = `${quantity}×`;
+    row.appendChild(qtyBox);
+
+    // Card image
+    const img = document.createElement('img');
+    img.src = card.image_uris?.small ?? card.card_faces?.[0]?.image_uris?.small;
+    img.alt = name;
+    img.style.width = '75px';
+    img.style.borderRadius = '4px';
+    row.appendChild(img);
+
+    // Info (name, set, price)
+    const info = document.createElement('div');
+    const foilText = foil ? ' <em>(Foil)</em>' : '';
+    info.innerHTML = `
+      <div><strong>${name}</strong>${foilText}</div>
+      <div style="font-size:0.9em;"><em>${card.set_name.toUpperCase()}</em></div>
+      <div style="font-size:0.9em;">${card.prices.usd ? `$${card.prices.usd}` : 'No price'} (USD)</div>
+    `;
+    row.appendChild(info);
+
+    // More Info button
+    const btn = document.createElement('button');
+    btn.textContent = 'More Info';
+    btn.style.padding = '0.4em 0.8em';
+    btn.style.fontSize = '0.85em';
+    btn.style.cursor = 'pointer';
+    btn.style.border = '1px solid #0077cc';
+    btn.style.background = '#1F9AFE';
+    btn.style.color = 'white';
+    btn.style.borderRadius = '4px';
+    btn.onclick = () => window.open(card.scryfall_uri, '_blank');
+    row.appendChild(btn);
+
+    deckArea.appendChild(row);
+  });
+};
+
+// Stub for Moxfield import (CORS-disabled); can be extended server-side
+window.importFromMoxfield = async function() {
+  alert("Moxfield import isn’t implemented in this client-only build; please paste your exported deck text.");
+};

@@ -1,41 +1,136 @@
-<html>
-  <head>
-    <title>CommanderBot</title>
-    <link rel="icon" type="image/x-icon" href="/commanderbotlogo.png?">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3031340425628894"
-     crossorigin="anonymous"></script>
-  </head>
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>CommanderBot</title>
+  <link rel="icon" type="image/x-icon" href="/commanderbotlogo.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
   <style>
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color: #f5f5f5;
+      text-align: center;
+    }
+
     .flex-container {
       display: flex;
       flex-wrap: wrap;
-      outline: 2px solid black;
+      justify-content: center;
+      align-items: center;
+      padding: 2em;
+      background: #ffffff;
+      border-bottom: 2px solid #ddd;
     }
-    body {
-      font-family: Arial, Helvetica, sans-serif;
+
+    .flex-container img {
+      width: 200px;
+      height: 200px;
+    }
+
+    .flex-container div {
+      margin: 1em;
+    }
+
+    h1 {
+      font-size: 2.5em;
+      margin: 0.2em;
+    }
+
+    a {
+      color: #1F9AFE;
+      font-size: 20px;
+      text-decoration: none;
+    }
+
+    a:hover {
+      text-decoration: underline;
+    }
+
+    #deckInput {
+      margin-top: 1em;
+      width: 80%;
+      max-width: 400px;
+      font-size: 1em;
+      padding: 0.5em;
+    }
+
+    #deckArea div {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1em;
+      margin: 0.5em 0;
+    }
+
+    #deckArea img {
+      width: 75px;
+      flex: 0 0 auto;
+    }
+
+    button {
+      margin-top: 0.5em;
+      padding: 0.6em 1.2em;
+      font-size: 1em;
+      background-color: #1F9AFE;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #147dd8;
+    }
+
+    hr {
+      margin: 2em 0;
+      border: none;
+      border-top: 1px solid #ccc;
     }
   </style>
-  <body>
-    <div class="flex-container">
-      <div>
-        <img src="commanderbotlogo.png" style="width: 200px; height: 200px;">
-      </div>
-      <div> </div>
-      <div>
-        <h1>CommanderBot</h1>
-        <p style="font-size: 20px; color:#1F9AFE;">
-          <a href="/CardViewer/CardViewer.html">Scryfall Card Viewer</a>
-        </p>
-        <p style="font-size: 20px; color:#1F9AFE;">
-          <a href="/CardCompare/CardCompare.html">MTG Trade Balance Powered By Scryfall</a>
-        </p>
-      </div>
-      <div>
-        <h3>CommanderBot is a tool to be used by Magic: The Gathering players made by Magic: The Gathering players.</h3>
-      </div>
+
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3031340425628894"
+     crossorigin="anonymous"></script>
+</head>
+
+<body>
+
+  <div class="flex-container">
+    <div>
+      <img src="/commanderbotlogo.png" alt="CommanderBot Logo">
     </div>
-    
-  </body>
+    <div>
+      <h1>CommanderBot</h1>
+      <p><a href="/CardViewer/CardViewer.html">Scryfall Card Viewer</a></p>
+      <p><a href="/CardCompare/CardCompare.html">MTG Trade Balance Tool</a></p>
+    </div>
+    <div>
+      <h3>CommanderBot is a tool for Magic: The Gathering players — built by players.</h3>
+    </div>
+  </div>
+
+  <hr>
+
+  <section>
+    <h2>Deck List Viewer</h2>
+    <p>Paste your deck list below (one card name per line):</p>
+
+    <textarea id="deckInput" rows="10" cols="40" placeholder="e.g.\nSol Ring\nRhystic Study\nLightning Bolt"></textarea>
+    <br>
+    <button onclick="loadDeck()">Load Deck</button>
+<p>
+  <input type="text" id="moxfieldUrl" placeholder="Paste Moxfield deck URL..." style="width: 80%; max-width: 400px;">
+  <br>
+  <button onclick="importFromMoxfield()">Import from Moxfield</button>
+</p>
+
+    <div id="deckArea" style="margin-top: 2em;"></div>
+  </section>
+
+  <script src="/DeckList/decklist.js.new"></script>
+</body>
+
 </html>
