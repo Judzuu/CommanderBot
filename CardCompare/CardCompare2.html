@@ -133,7 +133,7 @@
         <button onclick="addCardToTrade('A')">Add to Trade</button>
       </div>
       <ul id="listA"></ul>
-      <div class="total">Total: $<span id="totalA">0.00</span>
+      <div class="total">Total: $<span id="totalA">0.00</span></div>
     </div>
 
     <!-- Trader B -->
@@ -152,7 +152,7 @@
         <button onclick="addCardToTrade('B')">Add to Trade</button>
       </div>
       <ul id="listB"></ul>
-      <div class="total">Total: $<span id="totalB">0.00</span>
+      <div class="total">Total: $<span id="totalB">0.00</span></div>
     </div>
   </div>
 
@@ -193,7 +193,6 @@
     dropdown.innerHTML = '<option value="">Error loading versions</option>';
   }
 }
-
 
     async function fetchCardById(cardId) {
       const res = await fetch(`https://api.scryfall.com/cards/${cardId}`);
@@ -302,7 +301,7 @@
           item.onclick = () => {
             input.value = name;
             list.innerHTML = '';
-            setTimeout(() => fetchVersions(name, dropdownId), 50); // slight buffer
+            fetchVersions(name, dropdownId);
           };
           list.appendChild(item);
         });

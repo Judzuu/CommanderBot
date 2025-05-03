@@ -165,26 +165,34 @@
     };
 
     async function fetchVersions(cardName, dropdownId) {
-      const dropdown = document.getElementById(dropdownId);
-      dropdown.innerHTML = '<option>Loading...</option>';
-      try {
-        const search = await fetch(`https://api.scryfall.com/cards/named?exact=${encodeURIComponent(cardName)}`);
-        const card = await search.json();
-        const res = await fetch(card.prints_search_uri);
-        const data = await res.json();
+  const dropdown = document.getElementById(dropdownId);
+  dropdown.innerHTML = '<option>Loading...</option>';
 
-        dropdown.innerHTML = '<option value="">Select version...</option>';
-        data.data.forEach(print => {
-          const label = `${print.set_name} (#${print.collector_number})${print.foil ? '' : ''}`;
-          const option = document.createElement('option');
-          option.value = print.id;
-          option.textContent = label;
-          dropdown.appendChild(option);
-        });
-      } catch {
-        dropdown.innerHTML = '<option value="">Error loading versions</option>';
-      }
+  try {
+    const res = await fetch(`https://api.scryfall.com/cards/named?exact=${encodeURIComponent(cardName)}`);
+    const card = await res.json();
+
+    if (!card || card.object !== "card" || !card.prints_search_uri) {
+      throw new Error("Invalid card response");
     }
+
+    const printsRes = await fetch(card.prints_search_uri);
+    const data = await printsRes.json();
+
+    dropdown.innerHTML = '<option value="">Select version...</option>';
+
+    data.data.forEach(print => {
+      const label = `${print.set_name} (#${print.collector_number})${print.foil ? '' : ''}`;
+      const option = document.createElement('option');
+      option.value = print.id;
+      option.textContent = label;
+      dropdown.appendChild(option);
+    });
+  } catch (err) {
+    console.error("Error fetching versions:", err);
+    dropdown.innerHTML = '<option value="">Error loading versions</option>';
+  }
+}
 
     async function fetchCardById(cardId) {
       const res = await fetch(`https://api.scryfall.com/cards/${cardId}`);
