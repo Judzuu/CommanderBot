@@ -1,37 +1,39 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <!-- Set character encoding and page title -->
+  <!-- Metadata -->
   <meta charset="UTF-8">
   <title>MTG Trade Balance</title>
-  
-  <!-- Set favicon -->
+
+  <!-- Favicon -->
   <link rel="icon" type="image/x-icon" href="commanderbotlogo.png">
-  
-  <!-- CSS Styles -->
+
+  <!-- Styles -->
   <style>
-    /* Set default body styling */
+    /* Page layout */
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
       max-width: 1000px;
       margin: auto;
     }
+    h1, h2 { text-align: center; }
 
-    /* Center align headings */
-    h1, h2 {
-      text-align: center;
+    /* Back‑to‑home */
+    #backHome {
+      margin-bottom: 15px;
+      padding: 6px 12px;
+      font-size: 14px;
+      cursor: pointer;
     }
 
-    /* Container for trade sides */
+    /* Trade panels */
     .trade-sides {
       display: flex;
       justify-content: space-between;
       gap: 40px;
       flex-wrap: wrap;
     }
-
-    /* Individual trade side styling */
     .side {
       flex: 1;
       min-width: 300px;
@@ -41,42 +43,13 @@
       box-shadow: 2px 2px 10px #ddd;
     }
 
-    /* Input group container */
-    .input-group {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin-bottom: 10px;
-    }
+    /* Inputs */
+    .input-group { display: flex; flex-direction: column; gap: 8px; margin-bottom: 10px; }
+    input[type="text"], select, button { width: 100%; padding: 6px; font-size: 14px; }
+    .switch-group { display: flex; align-items: center; gap: 6px; }
 
-    /* Form input styling */
-    input[type="text"], 
-    select, 
-    button {
-      width: 100%;
-      padding: 6px;
-      font-size: 14px;
-    }
-
-    /* Foil switch container */
-    .switch-group {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    /* Foil switch label */
-    .switch-group label {
-      font-size: 14px;
-    }
-
-    /* Card list styling */
-    ul {
-      list-style: none;
-      padding: 0;
-    }
-
-    /* Individual card item styling */
+    /* Card list */
+    ul { list-style: none; padding: 0; }
     li {
       background: #f7f7f7;
       margin-bottom: 10px;
@@ -84,120 +57,73 @@
       border-radius: 6px;
       display: flex;
       gap: 10px;
-      align-items: center;
+      align-items: flex-start;
     }
-
-    /* Card information container */
-    .card-info {
-      flex: 1;
-    }
-
-    /* Card name and details */
-    .card-info span {
-      display: block;
-      font-size: 14px;
-    }
-
-    /* Card set info */
-    .card-info small {
-      color: gray;
-    }
-
-    /* Card image styling */
     .card-img {
       width: 100px;
       height: auto;
       border-radius: 6px;
       box-shadow: 0 0 4px rgba(0,0,0,0.2);
     }
+    .card-info { flex: 1; }
+    .card-info span { display: block; font-size: 14px; }
+    .card-info small { color: gray; }
 
-    /* Total price display */
-    .total {
-      margin-top: 15px;
-      font-weight: bold;
-    }
+    /* details / summary */
+    details { margin-top: 6px; font-size: 13px; }
+    details summary { cursor: pointer; font-weight: 600; }
+    .card-oracle { white-space: pre-line; margin-top: 4px; }
 
-    /* Error message styling */
-    .error {
-      color: red;
-      text-align: center;
-    }
+    /* Totals / errors */
+    .total { margin-top: 15px; font-weight: bold; }
+    .error { color: red; text-align: center; }
+    .unbalanced { color: red; }
 
-    /* Unbalanced trade highlight */
-    .unbalanced {
-      color: red;
-    }
-
-    /* Autocomplete container */
-    .autocomplete-results {
-      position: relative;
-    }
-
-    /* Autocomplete dropdown list */
+    /* Autocomplete */
+    .autocomplete-results { position: relative; }
     .autocomplete-list {
-      position: absolute;
-      top: 100%;
-      left: 0;
-      right: 0;
-      z-index: 10;
-      background: white;
-      border: 1px solid #ccc;
-      max-height: 150px;
-      overflow-y: auto;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      position: absolute; top: 100%; left: 0; right: 0; z-index: 10;
+      background: white; border: 1px solid #ccc; max-height: 150px;
+      overflow-y: auto; box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
-
-    /* Autocomplete list items */
-    .autocomplete-list div {
-      padding: 6px 10px;
-      cursor: pointer;
-    }
-
-    /* Autocomplete hover effect */
-    .autocomplete-list div:hover {
-      background: #f0f0f0;
-    }
+    .autocomplete-list div { padding: 6px 10px; cursor: pointer; }
+    .autocomplete-list div:hover { background: #f0f0f0; }
   </style>
 
-  <!-- Google AdSense Script -->
-  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3031340425628894"
-  crossorigin="anonymous"></script>
+  <!-- Google AdSense (optional) -->
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3031340425628894" crossorigin="anonymous"></script>
 </head>
 
 <body>
-  <!-- Page Title -->
-  <h1>MTG Trade Balance Powered By Scryfall</h1>
+  <!-- Back to home -->
+  <button id="backHome" onclick="window.location.href='index.html'">⬅ Back to Home</button>
 
-  <!-- Main trade container -->
+  <!-- Title -->
+  <h1>MTG Trade Balance Powered by Scryfall</h1>
+
+  <!-- Trade panels -->
   <div class="trade-sides">
-    <!-- Trader A Section -->
+    <!-- Trader A -->
     <div class="side">
-      <h2>Trader A</h2>
+      <h2>Trader A</h2>
       <div class="input-group">
-        <!-- Card search with autocomplete -->
         <div class="autocomplete-results">
           <input type="text" id="cardA-name" placeholder="Search card name" autocomplete="off">
           <div id="autocompleteA" class="autocomplete-list"></div>
         </div>
-        <!-- Card version selector -->
         <select id="cardA-version"><option value="">Select version...</option></select>
-        <!-- Foil toggle -->
         <div class="switch-group">
-          <input type="checkbox" id="foilA">
-          <label for="foilA">Foil</label>
+          <input type="checkbox" id="foilA"><label for="foilA">Foil</label>
         </div>
-        <!-- Add card button -->
         <button onclick="addCardToTrade('A')">Add to Trade</button>
       </div>
-      <!-- Card list container -->
       <ul id="listA"></ul>
-      <!-- Total value display -->
-      <div class="total">Total: $<span id="totalA">0.00</span></div>
+      <div class="total">Total: $<span id="totalA">0.00</span></div>
     </div>
 
-    <!-- Trader B Section (identical structure to Trader A) -->
+    <!-- Trader B -->
     <div class="side">
-      <h2>Trader B</h2>
+      <h2>Trader B</h2>
       <div class="input-group">
         <div class="autocomplete-results">
           <input type="text" id="cardB-name" placeholder="Search card name" autocomplete="off">
@@ -205,44 +131,39 @@
         </div>
         <select id="cardB-version"><option value="">Select version...</option></select>
         <div class="switch-group">
-          <input type="checkbox" id="foilB">
-          <label for="foilB">Foil</label>
+          <input type="checkbox" id="foilB"><label for="foilB">Foil</label>
         </div>
         <button onclick="addCardToTrade('B')">Add to Trade</button>
       </div>
       <ul id="listB"></ul>
-      <div class="total">Total: $<span id="totalB">0.00</span></div>
+      <div class="total">Total: $<span id="totalB">0.00</span></div>
     </div>
   </div>
 
-  <!-- Error message container -->
+  <!-- Error line -->
   <div class="error" id="error-message"></div>
 
-  <!-- Main trading functionality -->
+  <!-- Core logic -->
   <script>
-    // Initialize trade object to store cards for both traders
-    const trade = {
-      A: [],
-      B: []
-    };
+    /* ---------- state ---------- */
+    const trade = { A: [], B: [] };
 
-    // Fetch card versions from Scryfall API
+    /* ---------- fetch helpers ---------- */
     async function fetchVersions(cardName, dropdownId) {
       const dropdown = document.getElementById(dropdownId);
       dropdown.innerHTML = '<option>Loading...</option>';
-
       try {
         const search = await fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`);
         if (!search.ok) throw new Error('Card not found');
         const card = await search.json();
 
+        /* fallback: single printing */
         if (!card.prints_search_uri) {
-          // fallback to single card
           dropdown.innerHTML = '<option value="">Only one version available</option>';
-          const option = document.createElement('option');
-          option.value = card.id;
-          option.textContent = `${card.set_name} (#${card.collector_number})`;
-          dropdown.appendChild(option);
+          const opt = document.createElement('option');
+          opt.value = card.id;
+          opt.textContent = `${card.set_name} (#${card.collector_number})`;
+          dropdown.appendChild(opt);
           return;
         }
 
@@ -251,44 +172,36 @@
         const data = await res.json();
 
         dropdown.innerHTML = '<option value="">Select version...</option>';
-        data.data.forEach(print => {
-          const label = `${print.set_name} (#${print.collector_number})`;
-          const option = document.createElement('option');
-          option.value = print.id;
-          option.textContent = label;
-          dropdown.appendChild(option);
+        data.data.forEach(p => {
+          const opt = document.createElement('option');
+          opt.value = p.id;
+          opt.textContent = `${p.set_name} (#${p.collector_number})`;
+          dropdown.appendChild(opt);
         });
-
-        if (data.data.length === 0) {
-          dropdown.innerHTML = '<option value="">No versions found</option>';
-        }
-
-      } catch (error) {
-        console.error('Error fetching card versions:', error);
+        if (!data.data.length) dropdown.innerHTML = '<option value="">No versions found</option>';
+      } catch (err) {
+        console.error(err);
         dropdown.innerHTML = '<option value="">Error loading versions</option>';
       }
     }
 
-    // Fetch specific card details by ID
-    async function fetchCardById(cardId) {
-      const res = await fetch(`https://api.scryfall.com/cards/${cardId}`);
-      if (!res.ok) throw new Error('Network response was not ok');
-      return await res.json();
+    async function fetchCardById(id) {
+      const r = await fetch(`https://api.scryfall.com/cards/${id}`);
+      if (!r.ok) throw new Error('Card fetch failed');
+      return r.json();
     }
 
-    // Render the card list for a given side
+    /* ---------- rendering ---------- */
     function renderList(side) {
-      const listEl = document.getElementById(`list${side}`);
+      const list = document.getElementById(`list${side}`);
       const totalEl = document.getElementById(`total${side}`);
-      listEl.innerHTML = '';
+      list.innerHTML = '';
       let total = 0;
 
-      // Create list items for each card
-      trade[side].forEach((entry, index) => {
-        const { card, foil } = entry;
+      trade[side].forEach(({ card, foil }, idx) => {
         const price = foil ? card.prices.usd_foil : card.prices.usd;
-        const displayPrice = price || "0.00";
-        total += parseFloat(displayPrice) || 0;
+        const showPrice = price || '0.00';
+        total += parseFloat(showPrice) || 0;
 
         const li = document.createElement('li');
         li.innerHTML = `
@@ -296,33 +209,31 @@
           <div class="card-info">
             <span>${card.name} ${foil ? '[Foil]' : ''}</span>
             <small>${card.set_name} (#${card.collector_number})</small>
-            <span>$${displayPrice}</span>
+            <span>$${showPrice}</span>
+
+            <details>
+              <summary>More info</summary>
+              <div><strong>Mana Cost:</strong> ${card.mana_cost || '—'}</div>
+              <div><strong>Type Line:</strong> ${card.type_line}</div>
+              <div><strong>Rarity:</strong> ${card.rarity}</div>
+              <div class="card-oracle">${card.oracle_text || ''}</div>
+            </details>
           </div>
-          <button onclick="removeCard('${side}', ${index})">Remove</button>
+          <button onclick="removeCard('${side}', ${idx})">Remove</button>
         `;
-        listEl.appendChild(li);
+        list.appendChild(li);
       });
 
-      // Update total price
       totalEl.textContent = total.toFixed(2);
-
-      // Store total for comparison
       trade[`total${side}`] = total;
 
-      // Check trade balance
-      const otherSide = side === 'A' ? 'B' : 'A';
-      const totalA = trade.totalA || 0;
-      const totalB = trade.totalB || 0;
-
-      // Reset unbalanced styling
+      /* balance indicator (unchanged from your original) */
       document.getElementById('totalA').classList.remove('unbalanced');
       document.getElementById('totalB').classList.remove('unbalanced');
-
-      // Add unbalanced styling if difference is over $5
       if (trade.A.length > 0 && trade.B.length > 0) {
-        const diff = Math.abs(totalA - totalB);
+        const diff = Math.abs((trade.totalA || 0) - (trade.totalB || 0));
         if (diff > 5) {
-          if (totalA > totalB) {
+          if (trade.totalA > trade.totalB) {
             document.getElementById('totalB').classList.add('unbalanced');
           } else {
             document.getElementById('totalA').classList.add('unbalanced');
@@ -331,98 +242,77 @@
       }
     }
 
-    // Remove card from trade
-    function removeCard(side, index) {
-      trade[side].splice(index, 1);
+    /* ---------- actions ---------- */
+    function removeCard(side, idx) {
+      trade[side].splice(idx, 1);
       renderList(side);
     }
 
-    // Add card to trade
     async function addCardToTrade(side) {
-      const versionId = document.getElementById(`card${side}-version`).value;
-      const isFoil = document.getElementById(`foil${side}`).checked;
-      const errorMsg = document.getElementById('error-message');
-      errorMsg.textContent = '';
-
-      if (!versionId) {
-        errorMsg.textContent = 'Please select a version.';
-        return;
-      }
+      const id = document.getElementById(`card${side}-version`).value;
+      const foil = document.getElementById(`foil${side}`).checked;
+      const err = document.getElementById('error-message');
+      err.textContent = '';
+      if (!id) { err.textContent = 'Please select a version.'; return; }
 
       try {
-        const card = await fetchCardById(versionId);
-        trade[side].push({ card, foil: isFoil });
+        const card = await fetchCardById(id);
+        trade[side].push({ card, foil });
         renderList(side);
-      } catch (error) {
-        console.error('Error adding card to trade:', error);
-        errorMsg.textContent = 'Failed to add card.';
+      } catch (e) {
+        console.error(e);
+        err.textContent = 'Failed to add card.';
       }
     }
 
-    // Add event listeners for version fetching
+    /* ---------- autocomplete ---------- */
+    function setupAutocomplete(inputId, listId, dropdownId) {
+      const input = document.getElementById(inputId);
+      const list  = document.getElementById(listId);
+
+      input.addEventListener('input', async () => {
+        const q = input.value.trim();
+        if (!q) { list.innerHTML = ''; return; }
+
+        const res = await fetch(`https://api.scryfall.com/cards/autocomplete?q=${encodeURIComponent(q)}`);
+        if (!res.ok) return console.error('Autocomplete fetch error');
+        const data = await res.json();
+        list.innerHTML = '';
+
+        data.data.slice(0, 10).forEach(name => {
+          const div = document.createElement('div');
+          div.textContent = name;
+          div.onclick = () => { input.value = name; list.innerHTML = ''; fetchVersions(name, dropdownId); };
+          list.appendChild(div);
+        });
+      });
+      input.addEventListener('blur', () => setTimeout(() => list.innerHTML = '', 200));
+    }
+
+    setupAutocomplete('cardA-name', 'autocompleteA', 'cardA-version');
+    setupAutocomplete('cardB-name', 'autocompleteB', 'cardB-version');
+
+    /* ---------- on-change with retry (kept from your original) ---------- */
     document.getElementById('cardA-name').addEventListener('change', async () => {
-      const cardName = document.getElementById('cardA-name').value.trim();
-      if (cardName.length < 2 || cardName.length > 50) {
+      const name = document.getElementById('cardA-name').value.trim();
+      if (name.length < 2 || name.length > 50) {
         document.getElementById('error-message').textContent = 'Card name must be between 2 and 50 characters.';
         return;
       }
-      await fetchVersions(cardName, 'cardA-version');
-      // Retry fetching versions if the first attempt fails
+      await fetchVersions(name, 'cardA-version');
       if (document.getElementById('cardA-version').options.length <= 1) {
-        await fetchVersions(cardName, 'cardA-version');
+        await fetchVersions(name, 'cardA-version');
       }
     });
     document.getElementById('cardB-name').addEventListener('change', async () => {
-      const cardName = document.getElementById('cardB-name').value.trim();
-      if (cardName.length < 2 || cardName.length > 50) {
+      const name = document.getElementById('cardB-name').value.trim();
+      if (name.length < 2 || name.length > 50) {
         document.getElementById('error-message').textContent = 'Card name must be between 2 and 50 characters.';
         return;
       }
-      await fetchVersions(cardName, 'cardB-version');
+      await fetchVersions(name, 'cardB-version');
     });
   </script>
 
-  <!-- Autocomplete functionality -->
-  <script>
-    function setupAutocomplete(inputId, listId, dropdownId) {
-      const input = document.getElementById(inputId);
-      const list = document.getElementById(listId);
-  
-      // Handle input changes
-      input.addEventListener('input', async () => {
-        const query = input.value.trim();
-        if (!query) return list.innerHTML = '';
-  
-        // Fetch autocomplete suggestions
-        const res = await fetch(`https://api.scryfall.com/cards/autocomplete?q=${encodeURIComponent(query)}`);
-        if (!res.ok) {
-          console.error('Error fetching autocomplete suggestions:', res.statusText);
-          return;
-        }
-        const data = await res.json();
-        list.innerHTML = '';
-  
-        // Create suggestion items
-        data.data.slice(0, 10).forEach(name => {
-          const item = document.createElement('div');
-          item.textContent = name;
-          item.onclick = () => {
-            input.value = name;
-            list.innerHTML = '';
-            fetchVersions(name, dropdownId);
-          };
-          list.appendChild(item);
-        });
-      });
-  
-      // Close autocomplete on blur
-      input.addEventListener('blur', () => setTimeout(() => list.innerHTML = '', 200));
-    }
-  
-    // Setup autocomplete for both traders
-    setupAutocomplete('cardA-name', 'autocompleteA', 'cardA-version');
-    setupAutocomplete('cardB-name', 'autocompleteB', 'cardB-version');
-  </script>
-  
 </body>
 </html>
