@@ -82,6 +82,10 @@
       color: red;
       text-align: center;
     }
+    .unbalanced {
+        color: red;
+    }
+
   </style>
 </head>
 <body>
@@ -182,6 +186,28 @@
       });
 
       totalEl.textContent = total.toFixed(2);
+
+      // Update trade total for comparison
+    trade[`total${side}`] = total;
+
+    // Check balance when both sides have cards
+    const otherSide = side === 'A' ? 'B' : 'A';
+    const totalA = trade.totalA || 0;
+    const totalB = trade.totalB || 0;
+
+    document.getElementById('totalA').classList.remove('unbalanced');
+    document.getElementById('totalB').classList.remove('unbalanced');
+
+    if (trade.A.length > 0 && trade.B.length > 0) {
+    const diff = Math.abs(totalA - totalB);
+    if (diff > 5) {
+        if (totalA > totalB) {
+        document.getElementById('totalB').classList.add('unbalanced');
+        } else {
+        document.getElementById('totalA').classList.add('unbalanced');
+        }
+    }
+    }
     }
 
     function removeCard(side, index) {
