@@ -22,7 +22,7 @@
     }
     .side {
       flex: 1;
-      min-width: 300px;
+      min-width: 280px;
       border: 1px solid #ccc;
       padding: 15px;
       border-radius: 10px;
@@ -182,7 +182,7 @@
     dropdown.innerHTML = '<option value="">Select version...</option>';
 
     data.data.forEach(print => {
-      const label = `${print.set_name} (#${print.collector_number})${print.foil ? ' [Foil]' : ''}`;
+      const label = `${print.set_name} (#${print.collector_number})${print.foil ? '' : ''}`;
       const option = document.createElement('option');
       option.value = print.id;
       option.textContent = label;
