@@ -58,32 +58,49 @@
 
   <div id="card"></div>
 
-  <script>
-    function searchCard() {
-      const name = document.getElementById('cardName').value.trim();
-      const cardDiv = document.getElementById('card');
+  <a href="index.html">Back to Home</a>
 
-      if (!name) {
-        cardDiv.innerHTML = "<p>Please enter a card name.</p>";
+  <script>
+    function sanitizeInput(input) {
+      // Allow only common MTG card name characters
+      return input.replace(/[^a-zA-Z0-9'’:\- ]/g, '').trim();
+    }
+
+    async function searchCard() {
+      const rawInput = document.getElementById("cardName").value;
+      const cardName = sanitizeInput(rawInput);
+
+      // Fetch exact card match to check if it exists
+      let exactMatch = false;
+      try {
+        const exactResponse = await fetch(`https://api.scryfall.com/cards/named?exact=${encodeURIComponent(cardName)}`);
+        if (exactResponse.ok) {
+          exactMatch = true;
+        }
+      } catch (error) {
+        console.error("Error checking exact match:", error);
+      }
+
+      // Basic validation with exception for exact matches
+      if (!exactMatch && (cardName.length < 2 || cardName.length > 50)) {
+        alert("Please enter a card name between 2 and 50 characters.");
         return;
       }
 
-      fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(name)}`)
-        .then(response => response.json())
-        .then(data => {
-          if (data.image_uris) {
-            cardDiv.innerHTML = `
-              <h2>${data.name}</h2>
-              <img src="${data.image_uris.normal}" alt="${data.name}" />
-            `;
-          } else {
-            cardDiv.innerHTML = "<p>Card found, but no image available.</p>";
-          }
-        })
-        .catch(error => {
-          console.error(error);
-          cardDiv.innerHTML = "<p>Card not found. Please try another name.</p>";
-        });
+      try {
+        const response = await fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(cardName)}`);
+        if (!response.ok) {
+          throw new Error("Card not found");
+        }
+        const data = await response.json();
+        document.getElementById("card").innerHTML = `
+          <h2>${data.name}</h2>
+          <img src="${data.image_uris?.normal || data.card_faces?.[0]?.image_uris?.normal}" alt="${data.name}" />
+          <p><a href="${data.scryfall_uri}" target="_blank">View on Scryfall</a></p>
+        `;
+      } catch (error) {
+        document.getElementById("card").innerHTML = `<p style="color:red;">Error: ${error.message}</p>`;
+      }
     }
 
     // Autocomplete logic
