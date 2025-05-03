@@ -18,16 +18,42 @@
       max-width: 300px;
       display: block;
     }
+    .autocomplete-results {
+      position: relative;
+      width: 300px;
+    }
+    .autocomplete-list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      background: white;
+      border: 1px solid #ccc;
+      max-height: 150px;
+      overflow-y: auto;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .autocomplete-list div {
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+    .autocomplete-list div:hover {
+      background: #f0f0f0;
+    }
   </style>
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3031340425628894"
   crossorigin="anonymous"></script>
 </head>
 <body>
 
-  <center>
+<center>
   <h1>Scryfall Card Finder</h1>
 
-  <input type="text" id="cardName" placeholder="Enter card name..."/>
+  <div class="autocomplete-results">
+    <input type="text" id="cardName" placeholder="Enter card name..." autocomplete="off"/>
+    <div id="autocompleteList" class="autocomplete-list"></div>
+  </div>
   <button onclick="searchCard()">Search</button>
 
   <div id="card"></div>
@@ -59,7 +85,35 @@
           cardDiv.innerHTML = "<p>Card not found. Please try another name.</p>";
         });
     }
+
+    // Autocomplete logic
+    const input = document.getElementById('cardName');
+    const list = document.getElementById('autocompleteList');
+
+    input.addEventListener('input', async () => {
+      const query = input.value.trim();
+      if (!query) return list.innerHTML = '';
+
+      const res = await fetch(`https://api.scryfall.com/cards/autocomplete?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      list.innerHTML = '';
+
+      data.data.slice(0, 10).forEach(name => {
+        const item = document.createElement('div');
+        item.textContent = name;
+        item.onclick = () => {
+          input.value = name;
+          list.innerHTML = '';
+          searchCard(); // optional: trigger search when clicking a suggestion
+        };
+        list.appendChild(item);
+      });
+    });
+
+    // Hide list after short delay when losing focus
+    input.addEventListener('blur', () => setTimeout(() => list.innerHTML = '', 200));
   </script>
-  </center>
+</center>
+
 </body>
 </html>

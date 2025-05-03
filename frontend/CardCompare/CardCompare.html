@@ -1,25 +1,37 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+  <!-- Set character encoding and page title -->
   <meta charset="UTF-8">
   <title>MTG Trade Balance</title>
+  
+  <!-- Set favicon -->
   <link rel="icon" type="image/x-icon" href="commanderbotlogo.png">
+  
+  <!-- CSS Styles -->
   <style>
+    /* Set default body styling */
     body {
       font-family: Arial, sans-serif;
       padding: 20px;
       max-width: 1000px;
       margin: auto;
     }
+
+    /* Center align headings */
     h1, h2 {
       text-align: center;
     }
+
+    /* Container for trade sides */
     .trade-sides {
       display: flex;
       justify-content: space-between;
       gap: 40px;
       flex-wrap: wrap;
     }
+
+    /* Individual trade side styling */
     .side {
       flex: 1;
       min-width: 300px;
@@ -28,29 +40,43 @@
       border-radius: 10px;
       box-shadow: 2px 2px 10px #ddd;
     }
+
+    /* Input group container */
     .input-group {
       display: flex;
       flex-direction: column;
       gap: 8px;
       margin-bottom: 10px;
     }
-    input[type="text"], select, button {
+
+    /* Form input styling */
+    input[type="text"], 
+    select, 
+    button {
       width: 100%;
       padding: 6px;
       font-size: 14px;
     }
+
+    /* Foil switch container */
     .switch-group {
       display: flex;
       align-items: center;
       gap: 6px;
     }
+
+    /* Foil switch label */
     .switch-group label {
       font-size: 14px;
     }
+
+    /* Card list styling */
     ul {
       list-style: none;
       padding: 0;
     }
+
+    /* Individual card item styling */
     li {
       background: #f7f7f7;
       margin-bottom: 10px;
@@ -60,90 +86,264 @@
       gap: 10px;
       align-items: center;
     }
+
+    /* Card information container */
     .card-info {
       flex: 1;
     }
+
+    /* Card name and details */
     .card-info span {
       display: block;
       font-size: 14px;
     }
+
+... (294 lines left)
+Collapse
+message.txt
+12 KB
+
+Lilboo — 2:12 PM
+I also reused the code from the card compare for the autocomplete drop down menus. in the cardviewer 
+
+here is that code:
+[2:13 PM]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scryfall Card Viewer</title>
+Expand
+cardviewer.txt
+4 KB
+
+Lilboo — 2:51 PM
+I created a testing branch in the github repo, i have a virtual environment in the works.
+
+
+Message #general
+﻿
+
+
+
+Members list for general (channel)
+Online, 2 membersOnline — 2
+
+Enticious
+Measuring Pigeons
+
+
+Lilboo
+Offline, 1 memberOffline — 1
+
+Judzuu
+;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Set character encoding and page title -->
+  <meta charset="UTF-8">
+  <title>MTG Trade Balance</title>
+  
+  <!-- Set favicon -->
+  <link rel="icon" type="image/x-icon" href="commanderbotlogo.png">
+  
+  <!-- CSS Styles -->
+  <style>
+    /* Set default body styling */
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    /* Center align headings */
+    h1, h2 {
+      text-align: center;
+    }
+
+    /* Container for trade sides */
+    .trade-sides {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    /* Individual trade side styling */
+    .side {
+      flex: 1;
+      min-width: 300px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 2px 2px 10px #ddd;
+    }
+
+    /* Input group container */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    /* Form input styling */
+    input[type="text"], 
+    select, 
+    button {
+      width: 100%;
+      padding: 6px;
+      font-size: 14px;
+    }
+
+    /* Foil switch container */
+    .switch-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Foil switch label */
+    .switch-group label {
+      font-size: 14px;
+    }
+
+    /* Card list styling */
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    /* Individual card item styling */
+    li {
+      background: #f7f7f7;
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 6px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Card information container */
+    .card-info {
+      flex: 1;
+    }
+
+    /* Card name and details */
+    .card-info span {
+      display: block;
+      font-size: 14px;
+    }
+
+    /* Card set info */
     .card-info small {
       color: gray;
     }
+
+    /* Card image styling */
     .card-img {
       width: 100px;
       height: auto;
       border-radius: 6px;
       box-shadow: 0 0 4px rgba(0,0,0,0.2);
     }
+
+    /* Total price display */
     .total {
       margin-top: 15px;
       font-weight: bold;
     }
+
+    /* Error message styling */
     .error {
       color: red;
       text-align: center;
     }
+
+    /* Unbalanced trade highlight */
     .unbalanced {
-        color: red;
+      color: red;
     }
+
+    /* Autocomplete container */
     .autocomplete-results {
-        position: relative;
+      position: relative;
     }
+
+    /* Autocomplete dropdown list */
     .autocomplete-list {
-        position: absolute;
-        top: 100%;
-        left: 0;
-        right: 0;
-        z-index: 10;
-        background: white;
-        border: 1px solid #ccc;
-        max-height: 150px;
-        overflow-y: auto;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      background: white;
+      border: 1px solid #ccc;
+      max-height: 150px;
+      overflow-y: auto;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
     }
+
+    /* Autocomplete list items */
     .autocomplete-list div {
-        padding: 6px 10px;
-        cursor: pointer;
+      padding: 6px 10px;
+      cursor: pointer;
     }
+
+    /* Autocomplete hover effect */
     .autocomplete-list div:hover {
-        background: #f0f0f0;
+      background: #f0f0f0;
     }
   </style>
+
+  <!-- Google AdSense Script -->
   <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3031340425628894"
   crossorigin="anonymous"></script>
 </head>
+
 <body>
+  <!-- Page Title -->
   <h1>MTG Trade Balance Powered By Scryfall</h1>
 
+  <!-- Main trade container -->
   <div class="trade-sides">
-    <!-- Trader A -->
+    <!-- Trader A Section -->
     <div class="side">
       <h2>Trader A</h2>
       <div class="input-group">
+        <!-- Card search with autocomplete -->
         <div class="autocomplete-results">
-            <input type="text" id="cardA-name" placeholder="Search card name" autocomplete="off">
-            <div id="autocompleteA" class="autocomplete-list"></div>
-          </div>          
+          <input type="text" id="cardA-name" placeholder="Search card name" autocomplete="off">
+          <div id="autocompleteA" class="autocomplete-list"></div>
+        </div>
+        <!-- Card version selector -->
         <select id="cardA-version"><option value="">Select version...</option></select>
+        <!-- Foil toggle -->
         <div class="switch-group">
           <input type="checkbox" id="foilA">
           <label for="foilA">Foil</label>
         </div>
+        <!-- Add card button -->
         <button onclick="addCardToTrade('A')">Add to Trade</button>
       </div>
+      <!-- Card list container -->
       <ul id="listA"></ul>
+      <!-- Total value display -->
       <div class="total">Total: $<span id="totalA">0.00</span></div>
     </div>
 
-    <!-- Trader B -->
+    <!-- Trader B Section (identical structure to Trader A) -->
     <div class="side">
       <h2>Trader B</h2>
       <div class="input-group">
         <div class="autocomplete-results">
-            <input type="text" id="cardB-name" placeholder="Search card name" autocomplete="off">
-            <div id="autocompleteB" class="autocomplete-list"></div>
-          </div>          
+          <input type="text" id="cardB-name" placeholder="Search card name" autocomplete="off">
+          <div id="autocompleteB" class="autocomplete-list"></div>
+        </div>
         <select id="cardB-version"><option value="">Select version...</option></select>
         <div class="switch-group">
           <input type="checkbox" id="foilB">
@@ -156,23 +356,32 @@
     </div>
   </div>
 
+  <!-- Error message container -->
   <div class="error" id="error-message"></div>
 
+  <!-- Main trading functionality -->
   <script>
+    // Initialize trade object to store cards for both traders
     const trade = {
       A: [],
       B: []
     };
 
+    // Fetch card versions from Scryfall API
     async function fetchVersions(cardName, dropdownId) {
       const dropdown = document.getElementById(dropdownId);
       dropdown.innerHTML = '<option>Loading...</option>';
+      
       try {
+        // Get card details by exact name
         const search = await fetch(`https://api.scryfall.com/cards/named?exact=${encodeURIComponent(cardName)}`);
         const card = await search.json();
+        
+        // Get all printings of the card
         const res = await fetch(card.prints_search_uri);
         const data = await res.json();
 
+        // Populate dropdown with card versions
         dropdown.innerHTML = '<option value="">Select version...</option>';
         data.data.forEach(print => {
           const label = `${print.set_name} (#${print.collector_number})${print.foil ? '' : ''}`;
@@ -186,17 +395,20 @@
       }
     }
 
+    // Fetch specific card details by ID
     async function fetchCardById(cardId) {
       const res = await fetch(`https://api.scryfall.com/cards/${cardId}`);
       return await res.json();
     }
 
+    // Render the card list for a given side
     function renderList(side) {
       const listEl = document.getElementById(`list${side}`);
       const totalEl = document.getElementById(`total${side}`);
       listEl.innerHTML = '';
       let total = 0;
 
+      // Create list items for each card
       trade[side].forEach((entry, index) => {
         const { card, foil } = entry;
         const price = foil ? card.prices.usd_foil : card.prices.usd;
@@ -216,36 +428,41 @@
         listEl.appendChild(li);
       });
 
+      // Update total price
       totalEl.textContent = total.toFixed(2);
 
-      // Update trade total for comparison
-    trade[`total${side}`] = total;
+      // Store total for comparison
+      trade[`total${side}`] = total;
 
-    // Check balance when both sides have cards
-    const otherSide = side === 'A' ? 'B' : 'A';
-    const totalA = trade.totalA || 0;
-    const totalB = trade.totalB || 0;
+      // Check trade balance
+      const otherSide = side === 'A' ? 'B' : 'A';
+      const totalA = trade.totalA || 0;
+      const totalB = trade.totalB || 0;
 
-    document.getElementById('totalA').classList.remove('unbalanced');
-    document.getElementById('totalB').classList.remove('unbalanced');
+      // Reset unbalanced styling
+      document.getElementById('totalA').classList.remove('unbalanced');
+      document.getElementById('totalB').classList.remove('unbalanced');
 
-    if (trade.A.length > 0 && trade.B.length > 0) {
-    const diff = Math.abs(totalA - totalB);
-    if (diff > 5) {
-        if (totalA > totalB) {
-        document.getElementById('totalB').classList.add('unbalanced');
-        } else {
-        document.getElementById('totalA').classList.add('unbalanced');
+      // Add unbalanced styling if difference is over $5
+      if (trade.A.length > 0 && trade.B.length > 0) {
+        const diff = Math.abs(totalA - totalB);
+        if (diff > 5) {
+          if (totalA > totalB) {
+            document.getElementById('totalB').classList.add('unbalanced');
+          } else {
+            document.getElementById('totalA').classList.add('unbalanced');
+          }
         }
-    }
-    }
+      }
     }
 
+    // Remove card from trade
     function removeCard(side, index) {
       trade[side].splice(index, 1);
       renderList(side);
     }
 
+    // Add card to trade
     async function addCardToTrade(side) {
       const versionId = document.getElementById(`card${side}-version`).value;
       const isFoil = document.getElementById(`foil${side}`).checked;
@@ -266,7 +483,7 @@
       }
     }
 
-    // Event listeners for auto-fetching versions
+    // Add event listeners for version fetching
     document.getElementById('cardA-name').addEventListener('change', () => {
       fetchVersions(document.getElementById('cardA-name').value.trim(), 'cardA-version');
     });
@@ -274,19 +491,24 @@
       fetchVersions(document.getElementById('cardB-name').value.trim(), 'cardB-version');
     });
   </script>
+
+  <!-- Autocomplete functionality -->
   <script>
     function setupAutocomplete(inputId, listId, dropdownId) {
       const input = document.getElementById(inputId);
       const list = document.getElementById(listId);
   
+      // Handle input changes
       input.addEventListener('input', async () => {
         const query = input.value.trim();
         if (!query) return list.innerHTML = '';
   
+        // Fetch autocomplete suggestions
         const res = await fetch(`https://api.scryfall.com/cards/autocomplete?q=${encodeURIComponent(query)}`);
         const data = await res.json();
         list.innerHTML = '';
   
+        // Create suggestion items
         data.data.slice(0, 10).forEach(name => {
           const item = document.createElement('div');
           item.textContent = name;
@@ -299,10 +521,11 @@
         });
       });
   
-      // Close list on blur
+      // Close autocomplete on blur
       input.addEventListener('blur', () => setTimeout(() => list.innerHTML = '', 200));
     }
   
+    // Setup autocomplete for both traders
     setupAutocomplete('cardA-name', 'autocompleteA', 'cardA-version');
     setupAutocomplete('cardB-name', 'autocompleteB', 'cardB-version');
   </script>

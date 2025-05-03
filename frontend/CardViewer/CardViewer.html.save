@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <!-- Set character encoding and page title -->
+  <meta charset="UTF-8">
+  <title>MTG Trade Balance</title>
+  
+  <!-- Set favicon -->
+  <link rel="icon" type="image/x-icon" href="commanderbotlogo.png">
+  
+  <!-- CSS Styles -->
+  <style>
+    /* Set default body styling */
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
+      max-width: 1000px;
+      margin: auto;
+    }
+
+    /* Center align headings */
+    h1, h2 {
+      text-align: center;
+    }
+
+    /* Container for trade sides */
+    .trade-sides {
+      display: flex;
+      justify-content: space-between;
+      gap: 40px;
+      flex-wrap: wrap;
+    }
+
+    /* Individual trade side styling */
+    .side {
+      flex: 1;
+      min-width: 300px;
+      border: 1px solid #ccc;
+      padding: 15px;
+      border-radius: 10px;
+      box-shadow: 2px 2px 10px #ddd;
+    }
+
+    /* Input group container */
+    .input-group {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
+
+    /* Form input styling */
+    input[type="text"], 
+    select, 
+    button {
+      width: 100%;
+      padding: 6px;
+      font-size: 14px;
+    }
+
+    /* Foil switch container */
+    .switch-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    /* Foil switch label */
+    .switch-group label {
+      font-size: 14px;
+    }
+
+    /* Card list styling */
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+
+    /* Individual card item styling */
+    li {
+      background: #f7f7f7;
+      margin-bottom: 10px;
+      padding: 8px;
+      border-radius: 6px;
+      display: flex;
+      gap: 10px;
+      align-items: center;
+    }
+
+    /* Card information container */
+    .card-info {
+      flex: 1;
+    }
+
+    /* Card name and details */
+    .card-info span {
+      display: block;
+      font-size: 14px;
+    }
+
+... (294 lines left)
+Collapse
+message.txt
+12 KB
+
+Lilboo — 2:12 PM
+I also reused the code from the card compare for the autocomplete drop down menus. in the cardviewer 
+
+here is that code:
+[2:13 PM]
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scryfall Card Viewer</title>
+  <link rel="icon" type="image/x-icon" href="commanderbotlogo.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+      background: #f5f5f5;
+    }
+    #card {
+      margin-top: 20px;
+    }
+    img {
+      max-width: 300px;
+      display: block;
+    }
+    .autocomplete-results {
+      position: relative;
+      width: 300px;
+    }
+    .autocomplete-list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      background: white;
+      border: 1px solid #ccc;
+      max-height: 150px;
+      overflow-y: auto;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .autocomplete-list div {
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+    .autocomplete-list div:hover {
+      background: #f0f0f0;
+    }
+  </style>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3031340425628894"
+  crossorigin="anonymous"></script>
+</head>
+<body>
+
+<center>
+  <h1>Scryfall Card Finder</h1>
+
+  <div class="autocomplete-results">
+    <input type="text" id="cardName" placeholder="Enter card name..." autocomplete="off"/>
+    <div id="autocompleteList" class="autocomplete-list"></div>
+  </div>
+  <button onclick="searchCard()">Search</button>
+
+  <div id="card"></div>
+
+  <script>
+    function searchCard() {
+      const name = document.getElementById('cardName').value.trim();
+      const cardDiv = document.getElementById('card');
+
+      if (!name) {
+        cardDiv.innerHTML = "<p>Please enter a card name.</p>";
+        return;
+      }
+
+      fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(name)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.image_uris) {
+            cardDiv.innerHTML = `
+              <h2>${data.name}</h2>
+              <img src="${data.image_uris.normal}" alt="${data.name}" />
+            `;
+          } else {
+            cardDiv.innerHTML = "<p>Card found, but no image available.</p>";
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          cardDiv.innerHTML = "<p>Card not found. Please try another name.</p>";
+        });
+    }
+
+    // Autocomplete logic
+    const input = document.getElementById('cardName');
+    const list = document.getElementById('autocompleteList');
+
+    input.addEventListener('input', async () => {
+      const query = input.value.trim();
+      if (!query) return list.innerHTML = '';
+
+      const res = await fetch(`https://api.scryfall.com/cards/autocomplete?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      list.innerHTML = '';
+
+... (20 lines left)
+Collapse
+cardviewer.txt
+4 KB
+
+Lilboo — 2:51 PM
+I created a testing branch in the github repo, i have a virtual environment in the works.
+
+
+Message #general
+﻿
+
+
+
+Members list for general (channel)
+Online, 2 membersOnline — 2
+
+Enticious
+Measuring Pigeons
+
+
+Lilboo
+Offline, 1 memberOffline — 1
+
+Judzuu
+;
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Scryfall Card Viewer</title>
+  <link rel="icon" type="image/x-icon" href="commanderbotlogo.png">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      padding: 2em;
+      background: #f5f5f5;
+    }
+    #card {
+      margin-top: 20px;
+    }
+    img {
+      max-width: 300px;
+      display: block;
+    }
+    .autocomplete-results {
+      position: relative;
+      width: 300px;
+    }
+    .autocomplete-list {
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
+      z-index: 10;
+      background: white;
+      border: 1px solid #ccc;
+      max-height: 150px;
+      overflow-y: auto;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    .autocomplete-list div {
+      padding: 6px 10px;
+      cursor: pointer;
+    }
+    .autocomplete-list div:hover {
+      background: #f0f0f0;
+    }
+  </style>
+  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-3031340425628894"
+  crossorigin="anonymous"></script>
+</head>
+<body>
+
+<center>
+  <h1>Scryfall Card Finder</h1>
+
+  <div class="autocomplete-results">
+    <input type="text" id="cardName" placeholder="Enter card name..." autocomplete="off"/>
+    <div id="autocompleteList" class="autocomplete-list"></div>
+  </div>
+  <button onclick="searchCard()">Search</button>
+
+  <div id="card"></div>
+
+  <script>
+    function searchCard() {
+      const name = document.getElementById('cardName').value.trim();
+      const cardDiv = document.getElementById('card');
+
+      if (!name) {
+        cardDiv.innerHTML = "<p>Please enter a card name.</p>";
+        return;
+      }
+
+      fetch(`https://api.scryfall.com/cards/named?fuzzy=${encodeURIComponent(name)}`)
+        .then(response => response.json())
+        .then(data => {
+          if (data.image_uris) {
+            cardDiv.innerHTML = `
+              <h2>${data.name}</h2>
+              <img src="${data.image_uris.normal}" alt="${data.name}" />
+            `;
+          } else {
+            cardDiv.innerHTML = "<p>Card found, but no image available.</p>";
+          }
+        })
+        .catch(error => {
+          console.error(error);
+          cardDiv.innerHTML = "<p>Card not found. Please try another name.</p>";
+        });
+    }
+
+    // Autocomplete logic
+    const input = document.getElementById('cardName');
+    const list = document.getElementById('autocompleteList');
+
+    input.addEventListener('input', async () => {
+      const query = input.value.trim();
+      if (!query) return list.innerHTML = '';
+
+      const res = await fetch(`https://api.scryfall.com/cards/autocomplete?q=${encodeURIComponent(query)}`);
+      const data = await res.json();
+      list.innerHTML = '';
+
+      data.data.slice(0, 10).forEach(name => {
+        const item = document.createElement('div');
+        item.textContent = name;
+        item.onclick = () => {
+          input.value = name;
+          list.innerHTML = '';
+          searchCard(); // optional: trigger search when clicking a suggestion
+        };
+        list.appendChild(item);
+      });
+    });
+
+    // Hide list after short delay when losing focus
+    input.addEventListener('blur', () => setTimeout(() => list.innerHTML = '', 200));
+  </script>
+</center>
+
+</body>
+</html>
